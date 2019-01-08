@@ -1,53 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{album.album_name}}</title>
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <style>
-        i {
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-    </style>
-
-</head>
-
+{% extends 'layout.html' %} {% block title %} {{album.album_title}} {% endblock %} {% block body %}
 
 <body style="background:url(https://wallpapersite.com/images/pages/pic_w/13968.png) no-repeat center center fixed;background-size: cover;font-family:raleway;">
-
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="border-radius: 0% !important; text-align: center;padding-left: 40%;">
+            <li class="breadcrumb-item"><a href="/music">Home</a></li>
+            <li class="breadcrumb-item active"><a href="/music/{{album.id}}">{{album.album_title}}</a></li>
+        </ol>
+    </nav>
     <div class="container">
+        <div class="alert alert-{{error_type}}" style="margin-top:25px;padding:20px;padding-bottom: 0px;text-align: center;font-size: 1.4rem;">
+            {% if error_message %}
+            <p><strong>{{ error_message }}</strong></p>
+            {% endif %} {{mesg}}
+        </div>
+        <div style="position: fixed;top:11.5%;right: 0.5%;z-index:5;">
+            <h1 class="btn btn-dark"><a href="{% url 'music:update_album' album.id %}"> Edit Album </a></h1>
+            <h1 class="btn btn-danger"><a href="{% url 'music:delete_album' album.id %}"><i class="fas fa-trash" ></i> Delete Album </a></h1>
+        </div>
         <div class="jumbotron mt-3 mb-3 " style="padding-top:30px;padding-bottom:0px;background:url(https://wallpapersite.com/images/pages/pic_w/13968.png);background-size: cover; border: solid 2px rgb(2, 139, 252);opacity: 0.9;">
             <div class="row">
                 <div class="col-md-8">
                     <h1 class="text-danger">
                         {{album.album_title}}<br> By - {{album.artist}}<br> Genre - {{album.genre}}
-
                     </h1>
                 </div>
                 <div class="col-md-4">
-                    <img src="{{album.album_logo}}" style="align-items: center;align-self: center;text-align: center;width: 200px;height: 200px;margin: 25px;">
+                    <img src="{{album.album_logo.url}}" style="align-items: right;float: right; align-self: right;text-align: right;width: 200px;height: 200px;margin: 25px;">
                 </div>
-            </div>
 
-            <table class="table table-striped table-hover table-dark" style="font-size:1.1rem;">
+            </div>
+            <table class="table table-striped table-hover table-dark" style="font-size:1.1rem;text-align: center;">
                 <thead class="text-success">
                     <tr>
                         <th scope="col">Song Title</th>
                         <th scope="col">File Type</th>
-                        <th scope="col">Stars</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Favourite</th>
                     </tr>
                 </thead>
-                {% for song in album.song_set.all %}
                 <tbody class="text-warning">
+                    {% for song in album.song_set.all %}
                     <tr>
                         <td>{{ song.title }}</td>
                         <td scope="row">.{{song.file_type}}</td>
@@ -56,11 +48,24 @@
                             <i class="fas fa-star"></i><i class="fas fa-star"></i> {% endif %} {% if song.stars == 3 %} <i class="fas fa-star"></i><i class="fas fa-star"></i>
                             <i class="fas fa-star"></i> {% endif %} {% if song.stars == 2 %} <i class="fas fa-star"></i><i class="fas fa-star"></i> {% endif %} {% if song.stars == 1 %} <i class="fas fa-star"></i> {% endif %}
                         </td>
-                        {%endfor%}
+                        <td>
+                            {% if song.is_fav %}
+                            <i class="fas fa-heart fa-2x" style="color: red;"></i> {% endif %}
+                        </td>
+                    </tr>
+                    {%endfor%}
+                    <form action="{% url 'music:fav' album.id %}" id="myform" method="POST">
+                        {% csrf_token %} {% for song in album.song_set.all %}
+                        <input type="radio" id="song{{ forloop.counter }}" name="song" onclick="document.getElementById('myform').submit();" value="{{ song.id }}">
+                        <label for="song{{ forloop.counter }}">
+                                                {{song.title}}
+                                                {% if song.is_fav %}
+                                                    <i class="fas fa-heart fa-2x" style="color: red;" ></i>
+                                                {% endif %}
+                                            </label><br> {% endfor %}
+                    </form>
                 </tbody>
             </table>
         </div>
     </div>
-</body>
-
-</html>
+    {% endblock %}

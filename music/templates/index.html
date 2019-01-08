@@ -1,52 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-    <title>Music</title>
-</head>
-
-<body style="background:url(https://wallpapersite.com/images/pages/pic_w/13968.png) no-repeat center center fixed;background-size: cover;font-family: raleway;">
+{% extends 'layout.html' %} {% block title %} Music {% endblock %} {% block body %} {% if noalbum %}
+<div class="alert alert-{{s_status}}" style="text-align: center;">
+    {{noalbum}}
+</div>
+{% endif %}
+<div class="container">
+    <h1 style='text-align:center;font-size:4rem;color:rgb(166, 255, 0);letter-spacing:10px;margin:25px;padding:25px; font-family: satisfy;'>Music App</h1>
+    {% if albums %}
     <div class="container">
-        <h1 style='text-align:center;font-size:4rem;color:rgb(255, 0, 0);letter-spacing:10px;'>Music App</h1>
-        {% if albums %}
-        <div class="container">
+        <div class="row">
             {% for album in albums %}
-            <div class="card mb-4 bg-dark">
-                <a href="/music/{{album.id}}" style="text-decoration:none;">
-                    <div class="card-header" style="text-align:center;">
-                        {{album.album_title}}
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="{{album.album_logo}}" style="width:200px;height:200px;" alt="logo">
-                            </div>
-                            <div class="col-md-6 " style="text-align:center;font-size:2rem;">
-                                {{album.genre}}
+            <div class="col-md-6">
+                <div class="card mb-4 bg-dark" style="margin-right: 0%;">
+                    <a href="{% url 'music:album_details' album.id %}" style="text-decoration:none;">
+                        <div class="card-header" style="text-align:center;">
+                            {{album.album_title}}
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="{{album.album_logo.url}}" style="width:200px;height:200px;" alt="logo">
+                                </div>
+                                <div class="col-md-6" style="text-align:center;font-size:2rem;">
+                                    {{album.genre}}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer" style="text-align:right;">
-                        By - {{album.artist}}
-                    </div>
-                </a>
+                        <div class="card-footer" style="text-align:right;">
+                            By - {{album.artist}} &nbsp; | &nbsp;
+                            <a href="{% url 'music:delete_album' album.id %}"><i class="fas fa-trash text-danger"></i></a> &nbsp; | &nbsp;
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                    </a>
+                </div>
             </div>
             {% endfor %}
         </div>
-        {% else %}
-        <div class="alert alert-danger">
-            You have no albums added till now. <br> Why don't you add some?
-        </div>
-        {% endif %}
     </div>
-</body>
-
-</html>
+    {% else %}
+    <div class="alert alert-danger">
+        You have no albums added till now. <br> Why don't you add some?
+    </div>
+    {% endif %}
+</div>
+{% endblock %}a
