@@ -53,9 +53,9 @@
                             <i class="fas fa-heart fa-2x" style="color: red;"></i> {% endif %}
                         </td>
                     </tr>
-                    {%endfor%}
-                    <form action="{% url 'music:fav' album.id %}" id="myform" method="POST">
-                        {% csrf_token %} {% for song in album.song_set.all %}
+                    {%endfor%} {% for song in album.song_set.all %}
+                    <form action="{% url 'music:fav' song.id %}" id="myform" method="POST">
+                        {% csrf_token %}
                         <input type="radio" id="song{{ forloop.counter }}" name="song" onclick="document.getElementById('myform').submit();" value="{{ song.id }}">
                         <label for="song{{ forloop.counter }}">
                                                 {{song.title}}

@@ -2,7 +2,7 @@
 
 <h1 style="align-items: center;text-align: center;font-size: 3.5rem;padding-top: 25px;color: rgb(229, 255, 0); ">Create Album</h1>
 
-<div class="alert alert-danger">{{ mesg }}</div>
+<div class="alert alert-{{mesg_status}}">{{ mesg }}</div>
 <div class="container">
     <form action="{% url 'music:create_album' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
