@@ -3,6 +3,7 @@ from django.http import Http404
 from django.template import loader
 from django.shortcuts import render, get_object_or_404
 from .models import Album, song
+from django.shortcuts import redirect
 
 
 def Index(request):
@@ -76,7 +77,6 @@ def update_album(request, album_id):
     mesg_status = "warning"
     mesg = "hello"
     if(request.POST and request.POST['artist'] and request.POST['title'] and request.POST['genre'] and request.FILES['album_logo']):
-        album = Album()
         album.artist = request.POST['artist']
         album.album_title = request.POST['title']
         album.genre = request.POST['genre']
@@ -88,5 +88,10 @@ def update_album(request, album_id):
     return render(request, 'update_album.html', {'mesg': mesg, 'mesg_status': mesg_status, 'album': album})
 
 
-def delete_album(request):
-    return render(request, 'index.html')
+def delete_album(request, album_id):
+    album = Album.objects.get(id=album_id)
+    album.delete()
+    albums = Album.objects.all()
+    noalbum = "Album Deleted"
+    s_status = "danger"
+    return redirect('/music')
