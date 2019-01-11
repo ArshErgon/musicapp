@@ -8,10 +8,10 @@
         </ol>
     </nav>
     <div class="container">
-        <div class="alert alert-{{error_type}}" style="margin-top:25px;padding:20px;padding-bottom: 0px;text-align: center;font-size: 1.4rem;">
-            {% if error_message %}
-            <p><strong>{{ error_message }}</strong></p>
-            {% endif %} {{mesg}}
+        <div class="alert alert-{{mesg_status}}" style="margin-top:25px;padding:20px;padding-bottom: 0px;text-align: center;font-size: 1.4rem;">
+            {% if mesg %}
+            <p><strong>{{ mesg }}</strong></p>
+            {% endif %}
         </div>
         <div style="position: fixed;top:11.5%;right: 0.5%;z-index:5;">
             <h1 class="btn btn-dark"><a href="{% url 'music:update_album' album.id %}"> Edit Album </a></h1>
@@ -54,7 +54,7 @@
                         </td>
                     </tr>
                     {%endfor%} {% for song in album.song_set.all %}
-                    <form action="{% url 'music:fav' song.id %}" id="myform" method="POST">
+                    <form action="{% url 'music:fav' album.id %}" id="myform" method="POST">
                         {% csrf_token %}
                         <input type="radio" id="song{{ forloop.counter }}" name="song" onclick="document.getElementById('myform').submit();" value="{{ song.id }}">
                         <label for="song{{ forloop.counter }}">

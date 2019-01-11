@@ -1,8 +1,8 @@
 {% extends 'layout.html' %} {% block title %} Update Album {% endblock %} {% block body %}
 <h1 style="align-items: center;text-align: center;font-size: 3.5rem;padding-top: 25px;color: rgb(229, 255, 0); ">Update Album
 </h1>
-<h1>{{request.FILES[]}}</h1>
 <div class="alert alert-danger">{{ mesg }}</div>
+<h1>{{album}}</h1>
 <div class="container">
     <form action="{% url 'music:update_album' album.id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
