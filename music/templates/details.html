@@ -14,8 +14,12 @@
             {% endif %}
         </div>
         <div style="position: fixed;top:11.5%;right: 0.5%;z-index:5;">
-            <h1 class="btn btn-dark"><a href="{% url 'music:update_album' album.id %}"> Edit Album </a></h1>
-            <h1 class="btn btn-danger"><a href="{% url 'music:delete_album' album.id %}"><i class="fas fa-trash" ></i> Delete Album </a></h1>
+            <h1 class="btn btn-outline-warning"><a href="{% url 'music:addtocart' album.id %}"><i class="fas fa-cart-plus"></i> Add To Cart </a></h1>
+            <h1 class="btn btn-outline-success"><a href="{% url 'music:create_song' album.id %}"><i class="fas fa-plus-square"></i> Add Song </a></h1>
+            <h1 class="btn btn-dark">
+                <a href="{% url 'music:update_album' album.id %}"> <i class="fas fa-pencil-alt"></i> </a>
+            </h1>
+            <h1 class="btn btn-danger"><a href="{% url 'music:delete_album' album.id %}"><i class="fas fa-trash" ></i>  </a></h1>
         </div>
         <div class="jumbotron mt-3 mb-3 " style="padding-top:30px;padding-bottom:0px;background:url(https://wallpapersite.com/images/pages/pic_w/13968.png);background-size: cover; border: solid 2px rgb(2, 139, 252);opacity: 0.9;">
             <div class="row">

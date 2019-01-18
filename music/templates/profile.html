@@ -1,0 +1,5 @@
+{% extends 'layout.html' %} {% block title %} {{request.user.username}} {% endblock %} {% block body %} {% if request.user.is_active %}
+<h1>{{request.user}}</h1>
+{% else %}
+<h1>You are not logged in..... <a href="">login here</a> </h1>
+{% endif %} {% endblock %}

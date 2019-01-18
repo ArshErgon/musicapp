@@ -1,0 +1,14 @@
+{% extends 'layout.html' %} {% block title %} Login {% endblock %} {% block body %}
+<h1 class="text-center">Login</h1>
+<div class="container  text-lighten-5" style="position: relative;padding: 15px; background: rgba(255, 0, 0, 0.205);width: 40%;border-radius: 5%;font-size: 1.2rem;color: rgb(255, 208, 0);letter-spacing: 2px;">
+    {% if error %}
+    <div class="alert alert-danger">
+        {{error}}
+    </div>
+    {% endif %}
+    <form role="form" method="POST" action="{% url 'music:login' %}" class="form-group">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit" class="btn btn-primary btn-block"> Login </button>
+    </form>
+</div>
+{% endblock %}

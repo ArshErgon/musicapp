@@ -1,0 +1,56 @@
+{% extends 'layout.html' %} {% block title %} {{product.name}} {% endblock %} {% block body %}
+
+<body style="background:url(https://wallpapersite.com/images/pages/pic_w/13968.png) no-repeat center center fixed;background-size: cover;font-family:raleway;">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="border-radius: 0% !important; text-align: center;padding-left: 40%;">
+            <li class="breadcrumb-item"><a href="/music">Home</a></li>
+            <li class="breadcrumb-item active"><a href="/music/{{album.id}}">{{product.name}}</a></li>
+        </ol>
+    </nav>
+    <div class="container">
+        <div class="alert alert-{{mesg_status}}" style="margin-top:25px;padding:20px;padding-bottom: 0px;text-align: center;font-size: 1.4rem;">
+            {% if mesg %}
+            <p><strong>{{ mesg }}</strong></p>
+            {% endif %}
+        </div>
+        <div style="position: fixed;top:11.5%;right: 0.5%;z-index:5;">
+            <h1 class="btn btn-outline-warning"><a href="{% url 'music:addtocart' product.id %}"><i class="fas fa-cart-plus"></i>
+               Add To Cart </a></h1>
+        </div>
+        <div class="jumbotron mt-3 mb-3 " style="padding-top:30px;padding-bottom:0px;background:url(https://wallpapersite.com/images/pages/pic_w/13968.png);background-size: cover; border: solid 2px rgb(2, 139, 252);opacity: 0.9;">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1 class="text-danger">
+                        {{product.name}}<br> Price(per Kg) {{product.price}} <br> Avilable in Stock {{product.available}}
+                    </h1>
+                </div>
+                <div class="col-md-4">
+                    <img src="{{product.img.url}}" id="image" name="image">
+                    <style>
+                        #image {
+                            transition: all 2sec;
+                            float: right;
+                            width: 200px;
+                            height: 200px;
+                            position: fixed;
+                            z-index: 5;
+                        }
+                        
+                        #image:hover {
+                            transition: all 2sec;
+                            position: fixed;
+                            z-index: 5;
+                            transform: scale(2.0)
+                        }
+                    </style>
+                </div>
+
+            </div>
+            <div class="card bg-dark text-white mb-4 mt-4">
+                <div class="card-body">
+                    {{product.description}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -2,8 +2,48 @@ from django.http import HttpResponse
 from django.http import Http404
 from django.template import loader
 from django.shortcuts import render, get_object_or_404
-from .models import Album, song
+from .models import Album, song , cart
 from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+from .forms import UserForm, LoginForm
+from django.views.generic import View
+from .forms import SongForm
+from django.db import IntegrityError
+from .models import product as Product
+
+
+def CreateSong(request, album_id):
+    album = Album.objects.get(id=album_id)
+    if request.method == 'POST':
+        form = SongForm(request.POST)
+        if form.is_valid():
+            file_type = form.cleaned_data['file_type']
+            title = form.cleaned_data['title']
+            stars = form.cleaned_data['stars']
+            favourite = form.cleaned_data['favourite']
+            newsong = song()
+            newsong.album_id = album.id
+            newsong.file_type = file_type
+            newsong.title = title
+            newsong.stars = stars
+            newsong.is_fav = favourite
+            newsong.save()
+            return redirect('music:index')
+    else:
+        form = SongForm()
+    return render(request, 'create_song.html', {'form': form, 'album': album})
+
+
+def addtocart(request,product_id):
+   prod = Product.objects.get(id=product_id)
+   try:
+      ncart = cart.objects.get(user=request.user)
+      ncart.products.add(prod)
+      ncart.save()
+   except IntegrityError:
+       return render(request, 'index.html', {'noalbum': 'You already have made a Cart', 's_status': 'danger'})
+   return render(request,'index.html',{'noalbum':'Added to Cart','s_status':'success'})
 
 
 def Index(request):
@@ -12,6 +52,28 @@ def Index(request):
         'albums': albums
     }
     return render(request, 'index.html', context)
+
+def product_index(request):
+    products = Product.objects.all()
+    context = {
+        'products': products
+    }
+    return render(request, 'product_index.html', context)
+
+
+
+def album_fav(request, album_id):
+    album = Album.objects.get(id=album_id)
+    if album.is_fav == True:
+        album.is_fav = False
+        noalbum = "Album '"+album.album_title + "' UnFavourited."
+        s_status = 'danger'
+    else:
+        album.is_fav = True
+        noalbum = "Album '"+album.album_title + "' Favourited."
+        s_status = 'success'
+    album.save()
+    return render(request, 'index.html', {'albums': Album.objects.all(), 'noalbum': noalbum, 's_status': s_status})
 
 
 def album_details(request, album_id):
@@ -25,20 +87,33 @@ def album_details(request, album_id):
     return render(request, 'details.html', context)
 
 
+def product_details(request, product_slug,product_id):
+    try:
+        product = get_object_or_404(Product,id=product_id)
+        context = {
+            'product': product
+        }
+    except Product.DoesNotExist:
+        return render(request, '404.html', {'product_id': product_id})
+    return render(request, 'product_details.html', context)
+
+
+
+
 def fav(request, album_id):
     album = Album.objects.get(id=album_id)
     song_id = request.POST['song']
     songsel = get_object_or_404(song, id=song_id)
     if(songsel.is_fav == True):
-        error_message = "Song UnFavourited"
+        error_message = " '" + songsel.title + "' " + " is UnFavourited"
         error_type = "danger"
         songsel.is_fav = False
     else:
         songsel.is_fav = True
-        error_message = "Song Favourited"
+        error_message = " '" + songsel.title + "' is Favourited"
         error_type = "success"
     songsel.save()
-    return render(request, 'details.html', {'album': album, 'error_message': error_message, 'error_type': error_type})
+    return render(request, 'details.html', {'album': album, 'mesg': error_message, 'mesg_status': error_type})
 
 
 def search(request):
@@ -95,3 +170,57 @@ def delete_album(request, album_id):
     noalbum = "Album Deleted"
     s_status = "danger"
     return redirect('/music')
+
+
+def Login(request):
+    if(request.POST):
+        form = LoginForm(request.POST)
+        error = ""
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user:
+                login(request, user)
+                return redirect('music:index')
+            else:
+                error = "Invalid Username or Password , Try Again with correct credentials."
+    else:
+        error = ""
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form, 'error': error})
+
+
+class UserFormView(View):
+    form_class = UserForm
+    template_name = 'register.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return redirect('music:index')
+
+        return render(request, self.template_name, {'form': form})
+
+
+def profile(request):
+    return render(request, 'profile.html')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('music:index')

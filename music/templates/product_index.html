@@ -4,34 +4,32 @@
 </div>
 {% endif %}
 <div class="container">
-    <h1 style='text-align:center;font-size:4rem;color:rgb(166, 255, 0);letter-spacing:10px;margin:25px;padding:25px; font-family: satisfy;'>Music App</h1>
+    <h1 style='text-align:center;font-size:4rem;color:rgb(166, 255, 0);letter-spacing:10px;margin:25px;padding:25px; font-family: satisfy;'>Products
+    </h1>
     {% if request.user.is_active %}
     <h1 style='text-align:right;position: fixed; font-size:2rem;border: solid 5px aqua;padding: 10px; color:rgb(253, 236, 1) !important ; font-family: satisfy;top: 15%;right: 0%;'><a href="{% url 'music:profile' %}" style="text-decoration: none;"> Welcome :{{request.user.username}}</a></h1>
-    {% endif %} {% if albums %}
+    {% endif %} {% if products %}
     <div class="container">
         <div class="row">
-            {% for album in albums %}
+            {% for product in products %}
             <div class="col-md-6">
                 <div class="card mb-4 bg-dark" style="margin-right: 0%;">
-                    <a href="{% url 'music:album_details' album.id %}" style="text-decoration:none;">
+                    <a href="{% url 'music:product_details' product.slug product.id %}" style="text-decoration:none;">
                         <div class="card-header" style="text-align:center;">
-                            {{album.album_title}}
+                            {{product.name}}
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <img src="{{album.album_logo.url}}" style="width:200px;height:200px;" alt="logo">
+                                    <img src="{{product.img.url}}" style="width:200px;height:200px;" alt="logo">
                                 </div>
                                 <div class="col-md-6" style="text-align:center;font-size:2rem;">
-                                    {{album.genre}}
+                                    {{product.description}}
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align:right;">
-                            By - {{album.artist}} &nbsp; | &nbsp;
-                            <a href="{% url 'music:delete_album' album.id %}"><i class="fas fa-trash text-danger"></i></a> &nbsp; | &nbsp; {% if album.is_fav %}
-                            <a href="{% url 'music:album_fav' album.id %}"><i class="fas fa-star text-warning"></i></a>{% else %}
-                            <a href="{% url 'music:album_fav' album.id %}"><i class="far fa-star text-danger"></i></a> {% endif %}
+                            Price (per Kg) - {{ product.price }}
                         </div>
                     </a>
                 </div>
@@ -41,7 +39,7 @@
     </div>
     {% else %}
     <div class="alert alert-danger">
-        You have no albums added till now. <br> Why don't you add some?
+        You have no products added till now.
     </div>
     {% endif %}
 </div>
