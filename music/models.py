@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import datetime
 from django.contrib.auth.models import User
 
@@ -55,7 +55,7 @@ class product(models.Model):
 
 class cart(models.Model):
 
-    user        = models.ForeignKey(User)
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
     products    = models.ManyToManyField(product)
     subtotal    = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
     total       = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
